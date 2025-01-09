@@ -1,1 +1,1 @@
-Challenge para MindFactory
+Challenge para MindFactory.
