@@ -1,12 +1,11 @@
 # PDF and Image Text Extraction API
 
-This API allows the upload of PDF and image files (JPEG, PNG, JPG) to extract text using OCR (Optical Character Recognition) or direct PDF text extraction.
+This API allows the upload of image files (JPEG, PNG, JPG) to extract text using OCR (Optical Character Recognition) or direct PDF text extraction.
 
 ## Features
 
 - **Upload PDF Files**: Supports the upload of `.pdf` files and extracts text directly if available.
 - **OCR for Images**: Supports uploading `.jpg`, `.jpeg`, and `.png` image files. The API uses Tesseract OCR to extract text from images.
-- **OCR for PDF Images**: Extracts text from image-based PDFs using Tesseract OCR.
 - **Error Handling**: Handles invalid file formats, empty files, and failed text extraction.
 
 ## Requirements
