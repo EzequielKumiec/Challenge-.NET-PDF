@@ -65,3 +65,8 @@ Run Tests:
 ```bash
 dotnet test
 ```
+The tests will check the upload functionality for different cases:
+
+- Invalid file format (non-PDF, non-image files).
+- Empty file upload.
+- Successful text extraction from both PDF and image files.
