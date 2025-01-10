@@ -2,6 +2,9 @@
 using iText.Kernel.Pdf;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
+using iText.Kernel.Pdf.Canvas.Parser.Listener;
+using Tesseract;
+using iText.Kernel.Pdf.Xobject;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -11,28 +14,58 @@ namespace PDF_Reader.Controllers
     [ApiController]
     public class UploadController : ControllerBase
     {
-        [HttpPost("upload")]
-        public IActionResult Upload( IFormFile file)
+        private readonly TesseractEngine _tesseractEngine;
+
+        public UploadController()
         {
+            // Obtén la ruta base del proyecto
+            var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
+            // Obtén la ruta de 'tessdata' subiendo tres niveles
+            var tessDataPath = Path.Combine(baseDirectory, "..", "..", "..", "tessdata");
+
+            // Inicializa el motor de Tesseract con la ruta correcta
+            _tesseractEngine = new TesseractEngine(tessDataPath, "spa", EngineMode.Default);
+        }
+
+
+        [HttpPost("upload")]
+        public IActionResult Upload(IFormFile file)
+        {
+            
+            
             if (file == null || file.Length == 0)
                 return BadRequest("File not uploaded.");
 
-            if (Path.GetExtension(file.FileName).ToLower() != ".pdf")
+            string extractedText = string.Empty;
+
+            var fileExtension = Path.GetExtension(file.FileName).ToLower();
+
+            if (fileExtension == ".pdf")
             {
-                return BadRequest("Please upload a valid PDF file.");
+                using (var pdfStream = new MemoryStream())
+                {
+                    file.CopyTo(pdfStream);
+                    extractedText = ExtractTextFromPdf(pdfStream);
+                }
+
+                if (string.IsNullOrWhiteSpace(extractedText))
+                {
+                    extractedText = ExtractTextUsingOCR(file);
+                }
+            }
+            else if (fileExtension == ".jpg" || fileExtension == ".jpeg" || fileExtension == ".png")
+            {
+                extractedText = ExtractTextUsingOCRForImage(file);
+            }
+            else
+            {
+                return BadRequest("Please upload a valid PDF or JPG file.");
             }
 
-            string extractedText;
-
-            using (var pdfStream = new MemoryStream())
-            {
-                file.CopyTo(pdfStream);
-                extractedText = ExtractTextFromPdf(pdfStream);
-            }
-            // Si no se extrajo texto, respondemos con un error
             if (string.IsNullOrWhiteSpace(extractedText))
             {
-                return BadRequest("Failed to extract text from the PDF.");
+                return BadRequest("Failed to extract text from the file.");
             }
 
             return Ok(new { text = extractedText });
@@ -47,26 +80,120 @@ namespace PDF_Reader.Controllers
                 using (var pdfReader = new PdfReader(pdfStream))
                 using (var pdfDocument = new PdfDocument(pdfReader))
                 {
-                    var strategy = new iText.Kernel.Pdf.Canvas.Parser.Listener.SimpleTextExtractionStrategy();
-
+                    var strategy = new SimpleTextExtractionStrategy();
                     for (int i = 1; i <= pdfDocument.GetNumberOfPages(); i++)
                     {
                         var page = pdfDocument.GetPage(i);
                         var pageText = PdfTextExtractor.GetTextFromPage(page, strategy);
-
-                        // Reemplazar saltos de línea por un espacio
                         pageText = pageText.Replace("\r\n", " ").Replace("\n", " ");
-
                         textBuilder.Append(pageText);
                     }
                 }
-
                 return textBuilder.ToString();
             }
             catch (Exception ex)
             {
-                // Logear el error y retornar una respuesta de error adecuada
-                return $"Error extracting text: {ex.Message}";
+                return $"Error al extraer texto: {ex.Message}";
+            }
+        }
+
+        private string ExtractTextUsingOCR(IFormFile file)
+        {
+            try
+            {
+                using (var pdfReader = new PdfReader(file.OpenReadStream()))
+                using (var pdfDocument = new PdfDocument(pdfReader))
+                {
+                    var textBuilder = new StringBuilder();
+
+                    for (int i = 1; i <= pdfDocument.GetNumberOfPages(); i++)
+                    {
+                        var page = pdfDocument.GetPage(i);
+                        var images = ExtractImagesFromPage(page);
+
+                        foreach (var image in images)
+                        {
+                            using (var pix = Pix.LoadFromMemory(image))
+                            {
+                                var result = _tesseractEngine.Process(pix);
+                                textBuilder.Append(result.GetText());
+                            }
+                        }
+                    }
+
+                    var cleanText = textBuilder.ToString();
+
+                    return cleanText;
+                }
+            }
+            catch (Exception ex)
+            {
+                return $"Error al extraer texto: {ex.Message}";
+            }
+        }
+
+        private string ExtractTextUsingOCRForImage(IFormFile file)
+        {
+            try
+            {
+                using (var stream = file.OpenReadStream())
+                {
+                    using (var pix = Pix.LoadFromMemory(ReadFully(stream)))
+                    {
+                        var result = _tesseractEngine.Process(pix);
+                        string cleanedText = result.GetText().Replace("\r\n", " ").Replace("\n", " ");
+                        return cleanedText;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return $"Error al extraer texto: {ex.Message}";
+            }
+        }
+
+        private List<byte[]> ExtractImagesFromPage(PdfPage page)
+        {
+            var images = new List<byte[]>();
+
+            try
+            {
+                var resources = page.GetResources();
+                var xObjectNames = resources.GetResourceNames();
+
+                foreach (var xObjectName in xObjectNames)
+                {
+                    var pdfObject = resources.GetResource(xObjectName);
+
+                    if (pdfObject is PdfDictionary pdfDictionary && pdfDictionary.Get(PdfName.Subtype)?.ToString() == "/Image")
+                    {
+                        try
+                        {
+                            var imageObj = new PdfImageXObject((PdfStream)pdfDictionary);
+
+                            images.Add(imageObj.GetImageBytes());
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Error procesando la imagen: " + ex.Message);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error extrayendo imágenes: " + ex.Message);
+            }
+
+            return images;
+        }
+
+        private byte[] ReadFully(Stream input)
+        {
+            using (var ms = new MemoryStream())
+            {
+                input.CopyTo(ms);
+                return ms.ToArray();
             }
         }
     }
