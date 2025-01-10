@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PDF Reader", "PDF Reader.csproj", "{79E7E59D-4FFB-4EDF-BB4C-30221770D2E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PDF Reader", "PDF Reader.csproj", "{79E7E59D-4FFB-4EDF-BB4C-30221770D2E0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PDF ReaderTests", "..\PDF ReaderTests\PDF ReaderTests.csproj", "{F8790198-B600-435B-A5A6-4ABB071DA412}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{79E7E59D-4FFB-4EDF-BB4C-30221770D2E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79E7E59D-4FFB-4EDF-BB4C-30221770D2E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79E7E59D-4FFB-4EDF-BB4C-30221770D2E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8790198-B600-435B-A5A6-4ABB071DA412}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8790198-B600-435B-A5A6-4ABB071DA412}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8790198-B600-435B-A5A6-4ABB071DA412}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8790198-B600-435B-A5A6-4ABB071DA412}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
