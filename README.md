@@ -1,71 +1,76 @@
-# PDF and Image Text Extraction API
 
-This API allows the upload of image files (JPEG, PNG, JPG) to extract text using OCR (Optical Character Recognition) or direct PDF text extraction.
+# API de Extracción de Texto desde PDF e Imágenes
 
-## Features
+Esta API permite cargar archivos de imagen (JPEG, PNG, JPG) para extraer texto utilizando OCR (Reconocimiento Óptico de Caracteres) o la extracción directa de texto de archivos PDF.
 
-- **Upload PDF Files**: Supports the upload of `.pdf` files and extracts text directly if available.
-- **OCR for Images**: Supports uploading `.jpg`, `.jpeg`, and `.png` image files. The API uses Tesseract OCR to extract text from images.
-- **Error Handling**: Handles invalid file formats, empty files, and failed text extraction.
+## Características
 
-## Requirements
+- **Subir Archivos PDF**: Soporta la carga de archivos `.pdf` y extrae texto directamente si está disponible.
+- **OCR para Imágenes**: Soporta la carga de archivos de imagen `.jpg`, `.jpeg` y `.png`. La API utiliza Tesseract OCR para extraer texto de las imágenes.
+- **Manejo de Errores**: Maneja formatos de archivo no válidos, archivos vacíos y fallos en la extracción de texto.
 
-- **.NET Core 6+**: This API is built with .NET Core.
-- **Tesseract Engine**: For OCR processing of images and image-based PDFs.
-- **iText7**: For handling PDF document processing, including text extraction from native PDFs.
-- **PdfSharp**: For additional PDF handling (if needed).
-- **XUnit**: For unit testing.
-- **Moq**: A mocking framework for unit tests.
+## Requisitos
 
-### Tools and Libraries
+- **.NET Core 6+**: Esta API está construida con .NET Core.
+- **Motor Tesseract**: Para el procesamiento OCR de imágenes y archivos PDF basados en imágenes.
+- **iText7**: Para manejar el procesamiento de documentos PDF, incluyendo la extracción de texto desde PDFs nativos.
+- **PdfSharp**: Para manejo adicional de archivos PDF (si es necesario).
+- **XUnit**: Para pruebas unitarias.
+- **Moq**: Un marco de simulación para las pruebas unitarias.
 
-- **Tesseract**: A popular OCR engine.
-- **iText7**: A .NET library for reading and manipulating PDF files, used for text extraction from native PDFs.
-- **PdfSharp**: A .NET library for handling PDF documents (optional, based on specific use cases).
-- **XUnit**: For unit testing.
-- **Moq**: A mocking framework for unit tests.
+### Herramientas y Bibliotecas
 
-## Getting Started
+- **Tesseract**: Un motor de OCR popular.
+- **iText7**: Una biblioteca de .NET para leer y manipular archivos PDF, utilizada para la extracción de texto de PDFs nativos.
+- **PdfSharp**: Una biblioteca de .NET para manejar documentos PDF (opcional, según los casos de uso específicos).
+- **XUnit**: Para pruebas unitarias.
+- **Moq**: Un marco de simulación para pruebas unitarias.
 
-### Clone the Repository
+## Comenzando
+
+### Clonar el Repositorio
 
 ```bash
 git clone https://github.com/EzequielKumiec/Challenge-.NET-PDF.git
 cd Challenge-.NET-PDF
 ```
-# API Endpoints
 
-The following endpoints are available:
+# Endpoints de la API
+
+Los siguientes endpoints están disponibles:
 
 ### POST `/upload`
 
-- **Description**: Uploads a PDF or image file to the server and extracts text.
-- **Request**: The file should be sent as form data in the request body.
-- **Supported File Formats**: `.pdf`, `.jpg`, `.jpeg`, `.png`.
-- **Response**: Returns the extracted text from the file.
+- **Descripción**: Sube un archivo PDF o de imagen al servidor y extrae el texto.
+- **Solicitud**: El archivo debe enviarse como datos de formulario en el cuerpo de la solicitud.
+- **Formatos de Archivo Soportados**: `.pdf`, `.jpg`, `.jpeg`, `.png`.
+- **Respuesta**: Devuelve el texto extraído del archivo.
 
-#### Example Request (using curl)
+#### Ejemplo de Solicitud (usando curl)
 
 ```bash
 curl -X POST "http://localhost:5000/upload" -F "file=@path/to/your/file.pdf"
 ```
-#### Test Files
-For testing purposes, I have included two example files in the Files folder that you can upload to the API:
 
-- **PDF de prueba.pdf**: A sample PDF document that can be uploaded to test PDF extraction functionality.
-- **Imagen de prueba.jpg**: A sample image file for testing OCR extraction.
-You can upload these files directly via the /upload endpoint.
+#### Archivos de Prueba
 
-#### Testing
-Unit tests for the UploadController can be run using the following commands:
+Para fines de prueba, he incluido dos archivos de ejemplo en la carpeta `Files` que puedes cargar en la API:
 
-Run Tests:
+- **PDF de prueba.pdf**: Un documento PDF de ejemplo que se puede cargar para probar la funcionalidad de extracción de PDF.
+- **Imagen de prueba.jpg**: Un archivo de imagen de ejemplo para probar la extracción con OCR.
+
+Puedes cargar estos archivos directamente a través del endpoint `/upload`.
+
+#### Pruebas
+
+Las pruebas unitarias para el `UploadController` se pueden ejecutar usando el siguiente comando:
 
 ```bash
 dotnet test
 ```
-The tests will check the upload functionality for different cases:
 
-- Invalid file format (non-PDF, non-image files).
-- Empty file upload.
-- Successful text extraction from both PDF and image files.
+Las pruebas verificarán la funcionalidad de carga para diferentes casos:
+
+- Formato de archivo no válido (archivos que no sean PDF ni imágenes).
+- Carga de archivo vacío.
+- Extracción exitosa de texto tanto desde archivos PDF como desde imágenes.
