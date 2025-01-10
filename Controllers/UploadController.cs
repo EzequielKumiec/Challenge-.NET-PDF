@@ -32,7 +32,7 @@ namespace PDF_Reader.Controllers
             
             
             if (file == null || file.Length == 0)
-                return BadRequest("File not uploaded.");
+                return BadRequest("Archivo no subido.");
 
             string extractedText = string.Empty;
 
@@ -57,12 +57,12 @@ namespace PDF_Reader.Controllers
             }
             else
             {
-                return BadRequest("Please upload a valid PDF or JPG file.");
+                return BadRequest("Por favor subir un archivo PDF o JPG valido.");
             }
 
             if (string.IsNullOrWhiteSpace(extractedText))
             {
-                return BadRequest("Failed to extract text from the file.");
+                return BadRequest("Error al extraer datos del archivo.");
             }
 
             return Ok(new { text = extractedText });
