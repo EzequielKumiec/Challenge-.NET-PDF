@@ -38,7 +38,7 @@ cd your-repository-name
 
 The following endpoints are available:
 
-### POST `/api/upload`
+### POST `/upload`
 
 - **Description**: Uploads a PDF or image file to the server and extracts text.
 - **Request**: The file should be sent as form data in the request body.
@@ -48,14 +48,14 @@ The following endpoints are available:
 #### Example Request (using curl)
 
 ```bash
-curl -X POST "http://localhost:5000/api/upload" -F "file=@path/to/your/file.pdf"
+curl -X POST "http://localhost:5000/upload" -F "file=@path/to/your/file.pdf"
 ```
 #### Test Files
 For testing purposes, I have included two example files in the Files folder that you can upload to the API:
 
 - **PDF de prueba.pdf**: A sample PDF document that can be uploaded to test PDF extraction functionality.
 - **Imagen de prueba.jpg**: A sample image file for testing OCR extraction.
-You can upload these files directly via the /api/upload endpoint.
+You can upload these files directly via the /upload endpoint.
 
 #### Testing
 Unit tests for the UploadController can be run using the following commands:
