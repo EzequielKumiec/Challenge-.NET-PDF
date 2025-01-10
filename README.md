@@ -32,7 +32,7 @@ This API allows the upload of PDF and image files (JPEG, PNG, JPG) to extract te
 
 ```bash
 git clone https://github.com/EzequielKumiec/Challenge-.NET-PDF.git
-cd your-repository-name
+cd Challenge-.NET-PDF
 ```
 # API Endpoints
 
