@@ -10,7 +10,7 @@ using iText.Kernel.Pdf.Xobject;
 
 namespace PDF_Reader.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("")]
     [ApiController]
     public class UploadController : ControllerBase
     {
@@ -18,13 +18,10 @@ namespace PDF_Reader.Controllers
 
         public UploadController()
         {
-            // Obtén la ruta base del proyecto
             var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
-            // Obtén la ruta de 'tessdata' subiendo tres niveles
             var tessDataPath = Path.Combine(baseDirectory, "..", "..", "..", "tessdata");
 
-            // Inicializa el motor de Tesseract con la ruta correcta
             _tesseractEngine = new TesseractEngine(tessDataPath, "spa", EngineMode.Default);
         }
 
